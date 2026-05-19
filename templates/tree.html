@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="repo-title">
+    <a href="/{{ user }}">{{ user }}</a> /
+    <strong><a href="/{{ user }}/{{ repo }}">{{ repo }}</a></strong>
+</h2>
+
+<div class="repo-tabs">
+    <a href="/{{ user }}/{{ repo }}"><> Код</a>
+    <a href="/{{ user }}/{{ repo }}/commits">🕒 Комміти</a>
+    <a href="/{{ user }}/{{ repo }}/tree/" class="active">📁 Файли (Дерево)</a>
+</div>
+
+<div class="file-tree">
+    <table>
+        <thead>
+            <tr>
+                <th>Шлях: <code>/{{ path }}</code></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if path != "" %}
+            <tr>
+                <td><a href="javascript:history.back()">🔙 ..</a></td>
+            </tr>
+            {% endif %} {% for file in files %}
+            <tr>
+                <td>
+                    📄
+                    <a href="/{{ user }}/{{ repo }}/blob/{{ file }}"
+                        >{{ file }}</a
+                    >
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

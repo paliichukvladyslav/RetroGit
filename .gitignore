@@ -1,1 +1,6 @@
 /target
+**/*.rs.bk
+/repos/
+
+*.swp
+*.swo

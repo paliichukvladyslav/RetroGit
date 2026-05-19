@@ -1,0 +1,34 @@
+{% extends "base.html" %} {% block content %}
+<div class="grid">
+    <div>
+        <h3>Користувачі</h3>
+        <ul id="user-list">
+            {% for user in users %}
+            <li>
+                <a href="/{{ user }}">👤 <strong>{{ user }}</strong></a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <article>
+            <header><strong>Додати користувача</strong></header>
+            <form
+                hx-post="/create-user"
+                hx-target="#user-list"
+                hx-swap="beforeend"
+                hx-on::after-request="this.reset()"
+            >
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Логін (напр. torvalds)"
+                    required
+                />
+                <button type="submit">Створити</button>
+            </form>
+        </article>
+    </div>
+</div>
+{% endblock %}

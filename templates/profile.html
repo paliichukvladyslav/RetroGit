@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block content %}
+<nav aria-label="breadcrumb">
+    <ul>
+        <li><a href="/">Користувачі</a></li>
+        <li><strong>{{ user }}</strong></li>
+    </ul>
+</nav>
+
+<h2 class="repo-title">👤 {{ user }}</h2>
+<hr />
+
+<div class="grid">
+    <div>
+        <h3>Репозиторії</h3>
+        <ul id="repo-list">
+            {% for repo in repos %}
+            <li>
+                <a href="/{{ user }}/{{ repo }}"
+                    >📦 <strong>{{ repo }}</strong></a
+                >
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div>
+        <article>
+            <header><strong>Новий репозиторій</strong></header>
+            <form
+                hx-post="/{{ user }}/create-repo"
+                hx-target="#repo-list"
+                hx-swap="beforeend"
+                hx-on::after-request="this.reset()"
+            >
+                <input
+                    type="text"
+                    name="reponame"
+                    placeholder="Назва (напр. linux)"
+                    required
+                />
+                <button type="submit">Ініціалізувати</button>
+            </form>
+        </article>
+    </div>
+</div>
+{% endblock %}

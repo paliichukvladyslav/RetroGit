@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="uk" data-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>RetroGit</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+        />
+        <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+        <style>
+            nav.top-nav {
+                background-color: #24292f;
+                padding: 0.5rem 1rem;
+                margin-bottom: 2rem;
+            }
+            nav.top-nav a {
+                color: #ffffff;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1.2rem;
+            }
+            nav.top-nav a:hover {
+                color: #c0c4c8;
+            }
+
+            .repo-title {
+                margin-bottom: 0.5rem;
+                color: #0969da;
+            }
+            .repo-tabs {
+                display: flex;
+                gap: 1.5rem;
+                border-bottom: 1px solid var(--pico-muted-border-color);
+                margin-bottom: 1.5rem;
+            }
+            .repo-tabs a {
+                padding: 0.5rem 0;
+                text-decoration: none;
+                color: var(--pico-h1-color);
+                border-bottom: 2px solid transparent;
+            }
+            .repo-tabs a:hover {
+                border-bottom: 2px solid var(--pico-muted-border-color);
+            }
+            .repo-tabs a.active {
+                border-bottom: 2px solid #fd8c73;
+                font-weight: bold;
+            }
+
+            .file-tree {
+                border: 1px solid var(--pico-muted-border-color);
+                border-radius: 6px;
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
+            .file-tree table {
+                margin-bottom: 0;
+                width: 100%;
+            }
+            .file-tree th {
+                background-color: var(
+                    --pico-table-row-stripped-background-color
+                );
+                padding: 0.75rem 1rem;
+                border-bottom: 1px solid var(--pico-muted-border-color);
+            }
+            .file-tree td {
+                padding: 0.5rem 1rem;
+                border-bottom: 1px solid var(--pico-muted-border-color);
+            }
+            .file-tree tr:last-child td {
+                border-bottom: none;
+            }
+            .file-tree td a {
+                text-decoration: none;
+                color: var(--pico-color);
+            }
+            .file-tree td a:hover {
+                color: #0969da;
+                text-decoration: underline;
+            }
+
+            .blob-header {
+                background-color: var(
+                    --pico-table-row-stripped-background-color
+                );
+                padding: 0.75rem 1rem;
+                border: 1px solid var(--pico-muted-border-color);
+                border-radius: 6px 6px 0 0;
+                font-family: monospace;
+            }
+            .blob-view {
+                background: var(--pico-form-element-background-color);
+                padding: 1rem;
+                border-radius: 0 0 6px 6px;
+                overflow-x: auto;
+                border: 1px solid var(--pico-muted-border-color);
+                border-top: none;
+                margin-bottom: 2rem;
+                font-size: 0.9em;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="top-nav">
+            <div class="container">
+                <a href="/">🐙 RetroGit</a>
+            </div>
+        </nav>
+        <main class="container">{% block content %}{% endblock %}</main>
+    </body>
+</html>

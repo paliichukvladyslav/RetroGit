@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block content %}
+<h2 class="repo-title">
+    <a href="/{{ user }}">{{ user }}</a> /
+    <strong><a href="/{{ user }}/{{ repo }}">{{ repo }}</a></strong>
+</h2>
+
+<div class="repo-tabs">
+    <a href="/{{ user }}/{{ repo }}" class="active"><> Код</a>
+    <a href="/{{ user }}/{{ repo }}/commits">🕒 Комміти</a>
+    <a href="/{{ user }}/{{ repo }}/tree/">📁 Файли (Дерево)</a>
+</div>
+
+<article>
+    <header><strong>📄 README.md</strong></header>
+    <div>{{ readme|safe }}</div>
+</article>
+{% endblock %}
