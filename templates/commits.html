@@ -1,29 +1,95 @@
 {% extends "base.html" %} {% block content %}
-<h2 class="repo-title">
-    <a href="/{{ user }}">{{ user }}</a> /
-    <strong><a href="/{{ user }}/{{ repo }}">{{ repo }}</a></strong>
-</h2>
+<div class="window">
+    <div class="title-bar">
+        <div class="title-bar-text">
+            <i class="ri-git-repository-line"></i> Репозиторій: {{ user }} / {{
+            repo }}
+        </div>
+    </div>
+    <div class="window-body">
+        <menu role="tablist" style="margin-bottom: 1rem">
+            <li role="tab">
+                <a href="/{{ user }}/{{ repo }}"
+                    ><i class="ri-code-s-slash-line"></i> Код</a
+                >
+            </li>
+            <li role="tab" class="active">
+                <a href="/{{ user }}/{{ repo }}/commits"
+                    ><i class="ri-git-commit-line"></i> Комміти</a
+                >
+            </li>
+            <li role="tab">
+                <a href="/{{ user }}/{{ repo }}/tree/"
+                    ><i class="ri-folder-open-line"></i> Файли</a
+                >
+            </li>
+        </menu>
 
-<div class="repo-tabs">
-    <a href="/{{ user }}/{{ repo }}"><> Код</a>
-    <a href="/{{ user }}/{{ repo }}/commits" class="active">🕒 Комміти</a>
-    <a href="/{{ user }}/{{ repo }}/tree/">📁 Файли (Дерево)</a>
-</div>
-
-<div class="file-tree">
-    <table>
-        <thead>
-            <tr>
-                <th>Історія змін</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for commit in commits %}
-            <tr>
-                <td><code>{{ commit }}</code></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="window" role="tabpanel">
+            <div class="title-bar" style="background: #7f7f7f">
+                <div class="title-bar-text">Журнал Git</div>
+            </div>
+            <div
+                class="window-body"
+                style="
+                    background: #ffffff;
+                    padding: 1.5rem;
+                    border: 1px solid #7f7f7f;
+                    min-height: 200px;
+                "
+            >
+                <ul class="file-list" style="border: none">
+                    {% for commit in commits %}
+                    <li
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 0.5rem 0;
+                            border-bottom: 1px dotted #ccc;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.75rem;
+                            "
+                        >
+                            <i
+                                class="ri-git-commit-fill"
+                                style="color: #0055ff"
+                            ></i>
+                            <span
+                                style="
+                                    font-family:
+                                        &quot;Courier New&quot;, Courier,
+                                        monospace;
+                                    font-weight: bold;
+                                    color: #333;
+                                "
+                            >
+                                {{ commit[7..] }}
+                            </span>
+                        </div>
+                        <button
+                            disabled
+                            style="
+                                font-family: monospace;
+                                font-size: 13px;
+                                padding: 0 6px;
+                                min-width: auto;
+                                height: 22px;
+                                color: #000;
+                            "
+                        >
+                            {{ commit[..7] }}
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

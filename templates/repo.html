@@ -1,17 +1,46 @@
 {% extends "base.html" %} {% block content %}
-<h2 class="repo-title">
-    <a href="/{{ user }}">{{ user }}</a> /
-    <strong><a href="/{{ user }}/{{ repo }}">{{ repo }}</a></strong>
-</h2>
+<div class="window">
+    <div class="title-bar">
+        <div class="title-bar-text">
+            <i class="ri-git-repository-line"></i> Репозиторій: {{ user }} / {{
+            repo }}
+        </div>
+    </div>
+    <div class="window-body">
+        <menu role="tablist" style="margin-bottom: 1rem">
+            <li role="tab" class="active">
+                <a href="/{{ user }}/{{ repo }}"
+                    ><i class="ri-code-s-slash-line"></i> Код</a
+                >
+            </li>
+            <li role="tab">
+                <a href="/{{ user }}/{{ repo }}/commits"
+                    ><i class="ri-git-commit-line"></i> Комміти</a
+                >
+            </li>
+            <li role="tab">
+                <a href="/{{ user }}/{{ repo }}/tree/"
+                    ><i class="ri-folder-open-line"></i> Файли</a
+                >
+            </li>
+        </menu>
 
-<div class="repo-tabs">
-    <a href="/{{ user }}/{{ repo }}" class="active"><> Код</a>
-    <a href="/{{ user }}/{{ repo }}/commits">🕒 Комміти</a>
-    <a href="/{{ user }}/{{ repo }}/tree/">📁 Файли (Дерево)</a>
+        <div class="window" role="tabpanel">
+            <div class="title-bar" style="background: #7f7f7f">
+                <div class="title-bar-text">Блокнот - README.md</div>
+            </div>
+            <div
+                class="window-body markdown-body"
+                style="
+                    background: #ffffff;
+                    padding: 1.5rem;
+                    color: #000;
+                    border: 1px solid #7f7f7f;
+                "
+            >
+                {{ readme|safe }}
+            </div>
+        </div>
+    </div>
 </div>
-
-<article>
-    <header><strong>📄 README.md</strong></header>
-    <div>{{ readme|safe }}</div>
-</article>
 {% endblock %}

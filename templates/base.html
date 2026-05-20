@@ -1,114 +1,232 @@
 <!doctype html>
-<html lang="uk" data-theme="light">
+<html lang="uk">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>RetroGit</title>
-        <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
-        />
+        <link rel="stylesheet" href="https://unpkg.com/xp.css" />
         <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+            rel="stylesheet"
+        />
         <style>
-            nav.top-nav {
-                background-color: #24292f;
-                padding: 0.5rem 1rem;
-                margin-bottom: 2rem;
+            body {
+                background-color: #5a7edc;
+                background-image:
+                    linear-gradient(
+                        rgba(255, 255, 255, 0.1) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        rgba(255, 255, 255, 0.1) 1px,
+                        transparent 1px
+                    );
+                background-size: 20px 20px;
+                background-attachment: fixed;
+
+                padding: 2rem;
+                margin: 0;
+                font-family: sans-serif;
+                font-size: 16px;
             }
-            nav.top-nav a {
-                color: #ffffff;
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 1.2rem;
-            }
-            nav.top-nav a:hover {
-                color: #c0c4c8;
+            .desktop {
+                max-width: 1200px;
+                margin: 0 auto;
             }
 
-            .repo-title {
-                margin-bottom: 0.5rem;
-                color: #0969da;
-            }
-            .repo-tabs {
-                display: flex;
-                gap: 1.5rem;
-                border-bottom: 1px solid var(--pico-muted-border-color);
-                margin-bottom: 1.5rem;
-            }
-            .repo-tabs a {
-                padding: 0.5rem 0;
-                text-decoration: none;
-                color: var(--pico-h1-color);
-                border-bottom: 2px solid transparent;
-            }
-            .repo-tabs a:hover {
-                border-bottom: 2px solid var(--pico-muted-border-color);
-            }
-            .repo-tabs a.active {
-                border-bottom: 2px solid #fd8c73;
+            .window .title-bar-text {
+                font-size: 16px;
                 font-weight: bold;
             }
 
-            .file-tree {
-                border: 1px solid var(--pico-muted-border-color);
-                border-radius: 6px;
-                overflow: hidden;
-                margin-bottom: 2rem;
-            }
-            .file-tree table {
-                margin-bottom: 0;
-                width: 100%;
-            }
-            .file-tree th {
-                background-color: var(
-                    --pico-table-row-stripped-background-color
-                );
-                padding: 0.75rem 1rem;
-                border-bottom: 1px solid var(--pico-muted-border-color);
-            }
-            .file-tree td {
-                padding: 0.5rem 1rem;
-                border-bottom: 1px solid var(--pico-muted-border-color);
-            }
-            .file-tree tr:last-child td {
-                border-bottom: none;
-            }
-            .file-tree td a {
-                text-decoration: none;
-                color: var(--pico-color);
-            }
-            .file-tree td a:hover {
-                color: #0969da;
-                text-decoration: underline;
+            .window-body h2,
+            .window-body h3 {
+                font-size: 18px;
+                font-weight: bold;
+                margin-top: 0;
+                margin-bottom: 1rem;
+                color: #000;
             }
 
-            .blob-header {
-                background-color: var(
-                    --pico-table-row-stripped-background-color
-                );
-                padding: 0.75rem 1rem;
-                border: 1px solid var(--pico-muted-border-color);
-                border-radius: 6px 6px 0 0;
-                font-family: monospace;
+            .title-bar-controls {
+                display: flex;
+                align-items: center;
+                gap: 2px;
             }
-            .blob-view {
-                background: var(--pico-form-element-background-color);
-                padding: 1rem;
-                border-radius: 0 0 6px 6px;
+
+            .window-body strong a {
+                font-size: 16px;
+            }
+            .window-body i {
+                font-size: 20px;
+            }
+
+            .window-body a {
+                text-decoration: none;
+                color: #000;
+                font-size: 16px;
+            }
+            .window-body a:hover {
+                text-decoration: underline;
+                color: #0000ff;
+            }
+
+            .file-list {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+            .file-list li {
+                padding: 0.6rem 0.75rem;
+                border-bottom: 1px solid #d1d5db;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-size: 16px;
+            }
+            .file-list li:last-child {
+                border-bottom: none;
+            }
+            .file-list i {
+                font-size: 22px;
+            }
+
+            .window-grid {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 1.5rem;
+                margin-top: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .window-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+            /* Левая колонка (тянется сильнее) */
+            .col-left {
+                flex: 2 1 400px;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            /* Правая колонка (тянется слабее) */
+            .col-right {
+                flex: 1 1 250px;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            input[type="text"] {
+                font-size: 16px !important;
+                padding: 4px 6px !important;
+            }
+            button[type="submit"] {
+                font-size: 14px !important;
+                font-weight: bold !important;
+            }
+
+            menu[role="tablist"] {
+                padding-left: 2px;
+            }
+            menu[role="tablist"] li[role="tab"] {
+                margin-right: 2px;
+            }
+            menu[role="tablist"] li[role="tab"] a {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 2px 6px;
+            }
+
+            .markdown-body {
+                font-family: "Tahoma", sans-serif;
+                font-size: 15px;
+                line-height: 1.5;
+                color: #000000;
+            }
+            .markdown-body h1 {
+                font-size: 24px;
+                font-weight: bold;
+                margin-top: 0;
+                margin-bottom: 16px;
+                padding-bottom: 6px;
+                border-bottom: 1px solid #d1d5db;
+            }
+            .markdown-body h2 {
+                font-size: 20px;
+                margin-bottom: 12px;
+            }
+            .markdown-body h3 {
+                font-size: 16px;
+                margin-bottom: 12px;
+            }
+            .markdown-body p,
+            .markdown-body ul,
+            .markdown-body ol {
+                margin-bottom: 16px;
+            }
+            .markdown-body a {
+                color: #0000ff;
+                text-decoration: underline;
+            }
+            .markdown-body code {
+                font-family: "Courier New", Courier, monospace;
+                background-color: #f0f0f0;
+                padding: 2px 4px;
+                border: 1px solid #cccccc;
+                border-radius: 2px;
+            }
+            .markdown-body pre {
+                background-color: #ffffff;
+                border: 1px solid #7f9db9;
+                padding: 12px;
                 overflow-x: auto;
-                border: 1px solid var(--pico-muted-border-color);
-                border-top: none;
-                margin-bottom: 2rem;
-                font-size: 0.9em;
+                margin-bottom: 16px;
+            }
+            .markdown-body pre code {
+                background-color: transparent;
+                border: none;
+                padding: 0;
+            }
+            .markdown-body blockquote {
+                margin: 0 0 16px 0;
+                padding-left: 12px;
+                border-left: 4px solid #7f9db9;
+                color: #555555;
             }
         </style>
     </head>
     <body>
-        <nav class="top-nav">
-            <div class="container">
-                <a href="/">🐙 RetroGit</a>
+        <div class="desktop">
+            <div class="window" style="margin-bottom: 2rem">
+                <div class="title-bar">
+                    <div class="title-bar-text">
+                        <i class="ri-github-fill"></i> RetroGit v0.1.exe
+                    </div>
+                    <div class="title-bar-controls">
+                        <button aria-label="Minimize"></button>
+                        <button aria-label="Maximize"></button>
+                        <button
+                            aria-label="Close"
+                            onclick="window.location.href = '/'"
+                        ></button>
+                    </div>
+                </div>
+                <div
+                    class="window-body"
+                    style="padding: 0.5rem 1rem; font-weight: bold"
+                >
+                    <a href="/"><i class="ri-home-4-line"></i> На головну</a>
+                </div>
             </div>
-        </nav>
-        <main class="container">{% block content %}{% endblock %}</main>
+
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>

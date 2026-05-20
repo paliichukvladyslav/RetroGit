@@ -60,7 +60,7 @@ struct BlobTemplate {
 
 #[derive(Template)]
 #[template(
-    source = "<li><a href=\"/{{ name }}\">👤 <strong>{{ name }}</strong></a></li>",
+    source = "<li><i class=\"ri-user-line\"></i> <a href=\"/{{ name }}\"><strong>{{ name }}</strong></a></li>",
     ext = "html"
 )]
 struct UserItemFragment {
@@ -69,7 +69,7 @@ struct UserItemFragment {
 
 #[derive(Template)]
 #[template(
-    source = "<li><a href=\"/{{ user }}/{{ name }}\">📦 <strong>{{ name }}</strong></a></li>",
+    source = "<li><i class=\"ri-git-repository-line\"></i> <a href=\"/{{ user }}/{{ name }}\"><strong>{{ name }}</strong></a></li>",
     ext = "html"
 )]
 struct RepoItemFragment {

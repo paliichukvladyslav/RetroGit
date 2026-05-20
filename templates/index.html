@@ -1,34 +1,176 @@
 {% extends "base.html" %} {% block content %}
-<div class="grid">
-    <div>
-        <h3>Користувачі</h3>
-        <ul id="user-list">
-            {% for user in users %}
-            <li>
-                <a href="/{{ user }}">👤 <strong>{{ user }}</strong></a>
-            </li>
-            {% endfor %}
-        </ul>
+<div class="window-grid">
+    <div class="col-left">
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <i class="ri-team-line"></i> Провідник: Користувачі
+                </div>
+            </div>
+            <div class="window-body" style="padding: 1rem">
+                <h3>Зареєстровані користувачі RetroGit</h3>
+
+                <ul class="file-list" id="user-list">
+                    {% for user in users %}
+                    <li>
+                        <i class="ri-user-line" style="color: #008800"></i>
+                        <a href="/{{ user }}"><strong>{{ user }}</strong></a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <i class="ri-lightbulb-flash-line"></i> Порада дня
+                </div>
+            </div>
+            <div
+                class="window-body"
+                style="
+                    padding: 1rem;
+                    display: flex;
+                    gap: 1rem;
+                    align-items: flex-start;
+                "
+            >
+                <i
+                    class="ri-lightbulb-line"
+                    style="font-size: 48px; color: #ffcc00"
+                ></i>
+                <div style="flex-grow: 1">
+                    <h3 style="margin-bottom: 0.5rem">Чи знаєте ви?</h3>
+                    <p
+                        id="tip-content"
+                        style="margin: 0; line-height: 1.5; min-height: 3em"
+                    ></p>
+                    <div style="text-align: right; margin-top: 1rem">
+                        <button onclick="nextTip()">Наступна ></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div>
-        <article>
-            <header><strong>Додати користувача</strong></header>
-            <form
-                hx-post="/create-user"
-                hx-target="#user-list"
-                hx-swap="beforeend"
-                hx-on::after-request="this.reset()"
-            >
-                <input
-                    type="text"
-                    name="username"
-                    placeholder="Логін (напр. torvalds)"
-                    required
-                />
-                <button type="submit">Створити</button>
-            </form>
-        </article>
+    <div class="col-right">
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">Майстер створення</div>
+            </div>
+            <div class="window-body" style="padding: 1rem">
+                <form
+                    hx-post="/create-user"
+                    hx-target="#user-list"
+                    hx-swap="beforeend"
+                    hx-on::after-request="this.reset()"
+                >
+                    <div class="field-row-vertical">
+                        <label
+                            for="username"
+                            style="margin-bottom: 0.5rem; font-weight: bold"
+                            >Новий логін:</label
+                        >
+                        <input
+                            id="username"
+                            type="text"
+                            name="username"
+                            placeholder="напр. linus_t"
+                            required
+                            style="width: 100%"
+                        />
+                    </div>
+                    <div
+                        class="field-row"
+                        style="justify-content: flex-end; margin-top: 1.25rem"
+                    >
+                        <button type="submit">Створити</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <i class="ri-computer-line"></i> Властивості системи
+                </div>
+            </div>
+            <div class="window-body" style="padding: 1rem">
+                <div
+                    style="
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+                        margin-bottom: 1rem;
+                        border-bottom: 1px dotted #ccc;
+                        padding-bottom: 1rem;
+                    "
+                >
+                    <i
+                        class="ri-server-line"
+                        style="font-size: 40px; color: #555"
+                    ></i>
+                    <div>
+                        <strong>RetroGit Server</strong><br />
+                        Версія 0.1 (Build XYZ)
+                    </div>
+                </div>
+
+                <ul
+                    style="
+                        list-style: none;
+                        padding: 0;
+                        margin: 0;
+                        line-height: 1.8;
+                    "
+                >
+                    <li>
+                        <i
+                            class="ri-checkbox-circle-fill"
+                            style="color: #008800"
+                        ></i>
+                        <strong>Статус:</strong> Онлайн
+                    </li>
+                    <li>
+                        <i class="ri-hard-drive-2-line" style="color: #555"></i>
+                        <strong>Сховище:</strong> /repos
+                    </li>
+                    <li>
+                        <i class="ri-cpu-line" style="color: #555"></i>
+                        <strong>Двигун:</strong> git-core
+                    </li>
+                    <li>
+                        <i class="ri-ram-2-line" style="color: #555"></i>
+                        <strong>Пам'ять:</strong> 640K (вистачить усім)
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tips = [
+            "Цей веб-сервер побудований на <strong>Rust</strong> з використанням мікро-фреймворку <strong>Axum</strong>. Блискавична швидкість гарантована!",
+            "Завдяки <strong>HTMX</strong>, створення репозиторіїв та користувачів відбувається миттєво, без оновлення сторінки.",
+            "Ви можете переглядати історію коммітів та вміст файлів прямо з браузера, без використання консолі.",
+            "Дизайн цього інтерфейсу натхненний класичною естетикою <strong>Windows XP</strong> та старими десктопними програмами.",
+        ];
+
+        let currentTipIndex = 0;
+        const tipElement = document.getElementById("tip-content");
+
+        if (tipElement) {
+            tipElement.innerHTML = tips[currentTipIndex];
+
+            window.nextTip = function () {
+                currentTipIndex = (currentTipIndex + 1) % tips.length;
+                tipElement.innerHTML = tips[currentTipIndex];
+            };
+        }
+    });
+</script>
 {% endblock %}

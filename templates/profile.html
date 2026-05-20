@@ -1,46 +1,68 @@
 {% extends "base.html" %} {% block content %}
-<nav aria-label="breadcrumb">
-    <ul>
-        <li><a href="/">Користувачі</a></li>
-        <li><strong>{{ user }}</strong></li>
-    </ul>
-</nav>
+<div class="window-grid">
+    <div class="col-left">
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <i class="ri-user-3-line"></i> Профіль: {{ user }}
+                </div>
+            </div>
+            <div class="window-body" style="padding: 1rem">
+                <h3>Репозиторії користувача</h3>
 
-<h2 class="repo-title">👤 {{ user }}</h2>
-<hr />
-
-<div class="grid">
-    <div>
-        <h3>Репозиторії</h3>
-        <ul id="repo-list">
-            {% for repo in repos %}
-            <li>
-                <a href="/{{ user }}/{{ repo }}"
-                    >📦 <strong>{{ repo }}</strong></a
-                >
-            </li>
-            {% endfor %}
-        </ul>
+                <ul class="file-list" id="repo-list">
+                    {% for repo in repos %}
+                    <li>
+                        <i
+                            class="ri-git-repository-line"
+                            style="color: #0055ff"
+                        ></i>
+                        <a href="/{{ user }}/{{ repo }}"
+                            ><strong>{{ repo }}</strong></a
+                        >
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <div>
-        <article>
-            <header><strong>Новий репозиторій</strong></header>
-            <form
-                hx-post="/{{ user }}/create-repo"
-                hx-target="#repo-list"
-                hx-swap="beforeend"
-                hx-on::after-request="this.reset()"
-            >
-                <input
-                    type="text"
-                    name="reponame"
-                    placeholder="Назва (напр. linux)"
-                    required
-                />
-                <button type="submit">Ініціалізувати</button>
-            </form>
-        </article>
+    <div class="col-right">
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-bar-text">Ініціалізація репозиторію</div>
+            </div>
+            <div class="window-body" style="padding: 1rem">
+                <form
+                    hx-post="/{{ user }}/create-repo"
+                    hx-target="#repo-list"
+                    hx-swap="beforeend"
+                    hx-on::after-request="this.reset()"
+                >
+                    <div class="field-row-vertical">
+                        <label
+                            for="reponame"
+                            style="margin-bottom: 0.5rem; font-weight: bold"
+                            >Назва репозиторію:</label
+                        >
+                        <input
+                            id="reponame"
+                            type="text"
+                            name="reponame"
+                            placeholder="напр. linux"
+                            required
+                            style="width: 100%"
+                        />
+                    </div>
+                    <div
+                        class="field-row"
+                        style="justify-content: flex-end; margin-top: 1.25rem"
+                    >
+                        <button type="submit">Ініціалізувати</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
