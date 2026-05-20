@@ -19,14 +19,14 @@
                 >
             </li>
             <li role="tab">
-                <a href="/{{ user }}/{{ repo }}/tree/"
+                <a href="/{{ user }}/{{ repo }}/tree"
                     ><i class="ri-folder-open-line"></i> Файли</a
                 >
             </li>
         </menu>
 
         <div class="window" role="tabpanel">
-            <div class="title-bar" style="background: #7f7f7f">
+            <div class="title-bar inactive">
                 <div class="title-bar-text">Журнал Git</div>
             </div>
             <div
@@ -34,8 +34,8 @@
                 style="
                     background: #ffffff;
                     padding: 1.5rem;
-                    border: 1px solid #7f7f7f;
                     min-height: 200px;
+                    border: 1px solid #999;
                 "
             >
                 <ul class="file-list" style="border: none">

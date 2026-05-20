@@ -4,7 +4,13 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>RetroGit</title>
-        <link rel="stylesheet" href="https://unpkg.com/xp.css" />
+
+        <link
+            id="theme-stylesheet"
+            rel="stylesheet"
+            href="https://unpkg.com/xp.css"
+        />
+
         <script src="https://unpkg.com/htmx.org@2.0.0"></script>
         <link
             href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
@@ -28,7 +34,7 @@
 
                 padding: 2rem;
                 margin: 0;
-                font-family: sans-serif;
+                font-family: "Tahoma", sans-serif;
                 font-size: 16px;
             }
             .desktop {
@@ -94,27 +100,18 @@
             }
 
             .window-grid {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                gap: 1.5rem;
-                margin-top: 1.5rem;
-                align-items: flex-start;
-            }
-
-            .window-grid {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 1.5rem;
                 align-items: flex-start;
+                margin-top: 1.5rem;
             }
-            /* Левая колонка (тянется сильнее) */
             .col-left {
                 flex: 2 1 400px;
                 display: flex;
                 flex-direction: column;
                 gap: 1.5rem;
             }
-            /* Правая колонка (тянется слабее) */
             .col-right {
                 flex: 1 1 250px;
                 display: flex;
@@ -129,6 +126,12 @@
             button[type="submit"] {
                 font-size: 14px !important;
                 font-weight: bold !important;
+            }
+            select {
+                font-family: "Tahoma", sans-serif;
+                font-size: 14px;
+                min-width: 130px;
+                padding: 2px;
             }
 
             menu[role="tablist"] {
@@ -201,6 +204,64 @@
                 color: #555555;
             }
         </style>
+        <script>
+            const themes = {
+                xp: {
+                    name: "Windows XP",
+                    url: "https://unpkg.com/xp.css",
+                    bg: "#5A7EDC",
+                    bgImage:
+                        "linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)",
+                    bgSize: "20px 20px",
+                    bgRepeat: "repeat",
+                    bgPosition: "top left",
+                },
+                98: {
+                    name: "Windows 98",
+                    url: "https://unpkg.com/98.css",
+                    bg: "#008080",
+                    bgImage: "none",
+                    bgSize: "auto",
+                    bgRepeat: "repeat",
+                    bgPosition: "top left",
+                },
+                7: {
+                    name: "Windows 7",
+                    url: "https://unpkg.com/7.css",
+                    bg: "#154593",
+                    bgImage:
+                        "url('https://frutigeraeroarchive.org/images/backgrounds/longhorn.jpg')",
+                    bgSize: "cover",
+                    bgRepeat: "no-repeat",
+                    bgPosition: "center center",
+                },
+            };
+
+            function applyTheme(themeKey) {
+                if (!themes[themeKey]) themeKey = "xp";
+                const t = themes[themeKey];
+
+                const stylesheet = document.getElementById("theme-stylesheet");
+                if (stylesheet) stylesheet.href = t.url;
+
+                document.body.style.backgroundColor = t.bg;
+                document.body.style.backgroundImage = t.bgImage;
+                document.body.style.backgroundSize = t.bgSize;
+                document.body.style.backgroundRepeat = t.bgRepeat;
+                document.body.style.backgroundPosition = t.bgPosition;
+
+                localStorage.setItem("retrogit_theme", themeKey);
+
+                const selector = document.getElementById("theme-selector");
+                if (selector) selector.value = themeKey;
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                applyTheme(localStorage.getItem("retrogit_theme") || "xp");
+            });
+
+            applyTheme(localStorage.getItem("retrogit_theme") || "xp");
+        </script>
     </head>
     <body>
         <div class="desktop">
@@ -218,11 +279,42 @@
                         ></button>
                     </div>
                 </div>
+
                 <div
                     class="window-body"
-                    style="padding: 0.5rem 1rem; font-weight: bold"
+                    style="
+                        padding: 0.5rem 1rem;
+                        font-weight: bold;
+                        display: flex;
+                        align-items: center;
+                        gap: 2rem;
+                    "
                 >
-                    <a href="/"><i class="ri-home-4-line"></i> На головну</a>
+                    <a
+                        href="/"
+                        style="display: flex; align-items: center; gap: 0.5rem"
+                    >
+                        <i class="ri-home-4-line"></i> На головну
+                    </a>
+
+                    <div
+                        style="display: flex; align-items: center; gap: 0.5rem"
+                    >
+                        <label
+                            for="theme-selector"
+                            style="font-weight: bold; margin: 0"
+                        >
+                            <i class="ri-palette-line"></i> Тема:
+                        </label>
+                        <select
+                            id="theme-selector"
+                            onchange="applyTheme(this.value)"
+                        >
+                            <option value="xp">Windows XP</option>
+                            <option value="98">Windows 98</option>
+                            <option value="7">Windows 7</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 

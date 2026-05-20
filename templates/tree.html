@@ -13,10 +13,10 @@
         </menu>
 
         <div class="window" role="tabpanel">
-            <div class="title-bar" style="background: #7f7f7f;">
+            <div class="title-bar inactive">
                 <div class="title-bar-text">Провідник - /{{ path }}</div>
             </div>
-            <div class="window-body" style="background: #ffffff; padding: 1.5rem; border: 1px solid #7f7f7f; min-height: 200px;">
+            <div class="window-body" style="background: #ffffff; padding: 1.5rem; min-height: 200px; border: 1px solid #999;">
 
                 <ul class="file-list" style="border: none;">
                     {% if path != "" %}
@@ -39,7 +39,7 @@
                                     {{ file.name }}
                                 </a>
                             {% endif %}
-                            </li>
+                        </li>
                     {% endfor %}
                 </ul>
 
