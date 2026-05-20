@@ -2,7 +2,8 @@ use askama::Template;
 use axum::{
     Router,
     extract::{Form, Path},
-    response::{Html, IntoResponse, Redirect},
+    http::{StatusCode, header},
+    response::IntoResponse,
     routing::{get, post},
 };
 use pulldown_cmark::{Parser, html};
@@ -10,11 +11,16 @@ use serde::Deserialize;
 use std::process::Command;
 use std::{fs, path::PathBuf};
 
+struct UserInfo {
+    name: String,
+    has_avatar: bool,
+}
+
 /* templates */
 #[derive(Template)]
 #[template(path = "index.html")]
 struct IndexTemplate {
-    users: Vec<String>,
+    users: Vec<UserInfo>,
 }
 
 #[derive(Template)]
@@ -22,6 +28,7 @@ struct IndexTemplate {
 struct ProfileTemplate {
     user: String,
     repos: Vec<String>,
+    has_avatar: bool,
 }
 
 #[derive(Template)]
@@ -113,13 +120,20 @@ fn render<T: askama::Template>(template: T) -> axum::response::Html<String> {
     axum::response::Html(template.render().unwrap())
 }
 
+fn check_avatar(user: &str) -> bool {
+    PathBuf::from(format!("repos/{}/avatar.png", user)).exists()
+}
+
 /* route handlers */
 async fn home() -> impl IntoResponse {
     let mut users = vec![];
     if let Ok(entries) = fs::read_dir("repos") {
         for entry in entries.flatten() {
             if entry.path().is_dir() {
-                users.push(entry.file_name().to_string_lossy().to_string());
+                let name = entry.file_name().to_string_lossy().to_string();
+                let has_avatar = check_avatar(&name);
+
+                users.push(UserInfo { name, has_avatar });
             }
         }
     }
@@ -138,11 +152,21 @@ async fn profile(Path(user): Path<String>) -> impl IntoResponse {
     if let Ok(entries) = fs::read_dir(format!("repos/{}", user)) {
         for entry in entries.flatten() {
             if entry.path().is_dir() {
-                repos.push(entry.file_name().to_string_lossy().to_string());
+                let repo_name = entry.file_name().to_string_lossy().to_string();
+                // Пропускаем файл avatar.png, чтобы он не отображался как репозиторий!
+                if repo_name != "avatar.png" {
+                    repos.push(repo_name);
+                }
             }
         }
     }
-    render(ProfileTemplate { user, repos })
+
+    let has_avatar = check_avatar(&user);
+    render(ProfileTemplate {
+        user,
+        repos,
+        has_avatar,
+    })
 }
 
 async fn create_repo(
@@ -272,6 +296,15 @@ async fn blob(Path((user, repo, path)): Path<(String, String, String)>) -> impl 
     })
 }
 
+async fn get_avatar(Path(user): Path<String>) -> impl IntoResponse {
+    let avatar_path = format!("repos/{}/avatar.png", user);
+
+    match fs::read(&avatar_path) {
+        Ok(content) => ([(header::CONTENT_TYPE, "image/png")], content).into_response(),
+        Err(_) => StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
 /* entry point */
 #[tokio::main]
 async fn main() {
@@ -280,6 +313,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(home))
         .route("/create-user", post(create_user))
+        .route("/.avatars/{user}", get(get_avatar))
         .route("/{user}", get(profile))
         .route("/{user}/create-repo", post(create_repo))
         .route("/{user}/{repo}", get(repo))

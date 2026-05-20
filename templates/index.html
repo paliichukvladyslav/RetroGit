@@ -10,11 +10,28 @@
             <div class="window-body" style="padding: 1rem">
                 <h3>Зареєстровані користувачі RetroGit</h3>
 
-                <ul class="file-list" id="user-list">
+                <ul class="file-list">
                     {% for user in users %}
                     <li>
-                        <i class="ri-user-line" style="color: #008800"></i>
-                        <a href="/{{ user }}"><strong>{{ user }}</strong></a>
+                        {% if user.has_avatar %}
+                        <img
+                            src="/.avatars/{{ user.name }}"
+                            alt="{{ user.name }}"
+                            class="avatar-circle avatar-micro"
+                        />
+                        {% else %}
+                        <i
+                            class="ri-user-line"
+                            style="
+                                font-size: 32px;
+                                width: 32px;
+                                text-align: center;
+                            "
+                        ></i>
+                        {% endif %}
+                        <a href="/{{ user.name }}"
+                            ><strong>{{ user.name }}</strong></a
+                        >
                     </li>
                     {% endfor %}
                 </ul>

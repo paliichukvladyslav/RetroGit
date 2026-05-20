@@ -2,7 +2,6 @@
 
 USERS=(
     "paliichukvladyslav"
-    "64-bite"
     "Mortyfera"
     "MCPHackers"
 )
@@ -17,6 +16,14 @@ mkdir -p repos
 for user in "${USERS[@]}"; do
     echo "processing profile: $user"
     mkdir -p "repos/$user"
+
+    USER_DATA=$(curl -s "https://api.github.com/users/$user")
+    AVATAR_URL=$(echo "$USER_DATA" | jq -r '.avatar_url')
+
+    if [ "$AVATAR_URL" != "null" ] && [ -n "$AVATAR_URL" ]; then
+        echo "downloading avatar: $user"
+        curl -s -o "repos/$user/avatar.png" "$AVATAR_URL"
+    fi
 
     REPOS_URLS=$(curl -s "https://api.github.com/users/$user/repos?per_page=100" | jq -r '.[] | .clone_url')
 

@@ -1,10 +1,49 @@
 {% extends "base.html" %} {% block content %}
 <div class="window-grid">
     <div class="col-left">
+        <div class="window" style="margin-bottom: 1.5rem">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <i class="ri-user-3-line"></i> Візитна картка
+                </div>
+            </div>
+            <div
+                class="window-body"
+                style="
+                    padding: 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 2rem;
+                "
+            >
+                {% if has_avatar %}
+                <img
+                    src="/.avatars/{{ user }}"
+                    alt="{{ user }}"
+                    class="avatar-circle avatar-big"
+                    style="margin: 0"
+                />
+                {% else %}
+                <i
+                    class="ri-user-line"
+                    style="font-size: 128px; line-height: 1; color: #555"
+                ></i>
+                {% endif %}
+                <div>
+                    <h2 style="margin: 0 0 0.5rem 0; font-size: 24px">
+                        {{ user }}
+                    </h2>
+                    <p style="margin: 0; color: #555; font-size: 14px">
+                        Користувач RetroGit
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="window">
             <div class="title-bar">
                 <div class="title-bar-text">
-                    <i class="ri-user-3-line"></i> Профіль: {{ user }}
+                    <i class="ri-folder-shared-line"></i> Профіль: {{ user }}
                 </div>
             </div>
             <div class="window-body" style="padding: 1rem">
