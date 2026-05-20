@@ -4,6 +4,7 @@ USERS=(
     "paliichukvladyslav"
     "Mortyfera"
     "MCPHackers"
+    "AndriyMoisKPI"
 )
 
 if ! command -v jq &> /dev/null; then
