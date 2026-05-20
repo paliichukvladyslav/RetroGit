@@ -1,63 +1,48 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <div class="window">
     <div class="title-bar">
-        <div class="title-bar-text">
-            <i class="ri-git-repository-line"></i> Репозиторій: {{ user }} / {{
-            repo }}
-        </div>
+        <div class="title-bar-text"><i class="ri-git-repository-line"></i> Репозиторій: {{ user }} / {{ repo }}</div>
     </div>
     <div class="window-body">
-        <menu role="tablist" style="margin-bottom: 1rem">
-            <li role="tab">
-                <a href="/{{ user }}/{{ repo }}"
-                    ><i class="ri-code-s-slash-line"></i> Код</a
-                >
-            </li>
-            <li role="tab">
-                <a href="/{{ user }}/{{ repo }}/commits"
-                    ><i class="ri-git-commit-line"></i> Комміти</a
-                >
-            </li>
-            <li role="tab" class="active">
-                <a href="/{{ user }}/{{ repo }}/tree/"
-                    ><i class="ri-folder-open-line"></i> Файли</a
-                >
-            </li>
+        <menu role="tablist" style="margin-bottom: 1rem;">
+            <li role="tab"><a href="/{{ user }}/{{ repo }}"><i class="ri-code-s-slash-line"></i> Код</a></li>
+            <li role="tab"><a href="/{{ user }}/{{ repo }}/commits"><i class="ri-git-commit-line"></i> Комміти</a></li>
+            <li role="tab" class="active"><a href="/{{ user }}/{{ repo }}/tree"><i class="ri-folder-open-line"></i> Файли</a></li>
         </menu>
 
         <div class="window" role="tabpanel">
-            <div class="title-bar" style="background: #7f7f7f">
+            <div class="title-bar" style="background: #7f7f7f;">
                 <div class="title-bar-text">Провідник - /{{ path }}</div>
             </div>
-            <div
-                class="window-body"
-                style="
-                    background: #ffffff;
-                    padding: 1.5rem;
-                    border: 1px solid #7f7f7f;
-                    min-height: 200px;
-                "
-            >
-                <ul class="file-list" style="border: none">
+            <div class="window-body" style="background: #ffffff; padding: 1.5rem; border: 1px solid #7f7f7f; min-height: 200px;">
+
+                <ul class="file-list" style="border: none;">
                     {% if path != "" %}
-                    <li style="border-bottom: 1px dotted #ccc">
-                        <i
-                            class="ri-corner-left-up-line"
-                            style="color: #555"
-                        ></i>
-                        <a href="javascript:history.back()"
-                            ><strong>..</strong></a
-                        >
+                    <li style="border-bottom: 1px dotted #ccc;">
+                        <i class="ri-corner-left-up-line" style="color: #555;"></i>
+                        <a href="javascript:history.back()"><strong>..</strong></a>
                     </li>
-                    {% endif %} {% for file in files %}
-                    <li style="border-bottom: 1px dotted #ccc">
-                        <i class="ri-file-text-line" style="color: #555"></i>
-                        <a href="/{{ user }}/{{ repo }}/blob/{{ file }}"
-                            ><strong>{{ file }}</strong></a
-                        >
-                    </li>
+                    {% endif %}
+
+                    {% for file in files %}
+                        <li style="border-bottom: 1px dotted #ccc;">
+                            {% if file.is_dir %}
+                                <i class="ri-folder-3-fill" style="color: #0055ff;"></i>
+                                <a href="/{{ user }}/{{ repo }}/tree/{% if path != "" %}{{ path }}/{% endif %}{{ file.name }}">
+                                    <strong>{{ file.name }}</strong>
+                                </a>
+                            {% else %}
+                                <i class="ri-file-text-line" style="color: #555;"></i>
+                                <a href="/{{ user }}/{{ repo }}/blob/{% if path != "" %}{{ path }}/{% endif %}{{ file.name }}">
+                                    {{ file.name }}
+                                </a>
+                            {% endif %}
+                            </li>
                     {% endfor %}
                 </ul>
+
             </div>
         </div>
     </div>

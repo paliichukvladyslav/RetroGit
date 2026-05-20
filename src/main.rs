@@ -41,15 +41,6 @@ struct CommitsTemplate {
 }
 
 #[derive(Template)]
-#[template(path = "tree.html")]
-struct TreeTemplate {
-    user: String,
-    repo: String,
-    path: String,
-    files: Vec<String>,
-}
-
-#[derive(Template)]
 #[template(path = "blob.html")]
 struct BlobTemplate {
     user: String,
@@ -77,6 +68,22 @@ struct RepoItemFragment {
     name: String,
 }
 
+#[derive(Debug)]
+struct GitFile {
+    name: String,
+    mode: String,
+    is_dir: bool,
+}
+
+#[derive(Template)]
+#[template(path = "tree.html")]
+struct TreeTemplate {
+    user: String,
+    repo: String,
+    path: String,
+    files: Vec<GitFile>,
+}
+
 /* forms */
 #[derive(Deserialize)]
 struct CreateUserForm {
@@ -94,6 +101,10 @@ fn run_git(repo_dir: &PathBuf, args: &[&str]) -> String {
         .args(args)
         .output()
         .unwrap_or_else(|_| panic!("Failed to run git command in {:?}", repo_dir));
+
+    if !output.stderr.is_empty() {
+        println!("GIT ERROR: {}", String::from_utf8_lossy(&output.stderr));
+    }
 
     String::from_utf8_lossy(&output.stdout).to_string()
 }
@@ -188,24 +199,65 @@ async fn commits(Path((user, repo)): Path<(String, String)>) -> impl IntoRespons
     })
 }
 
-async fn tree(Path((user, repo, path)): Path<(String, String, String)>) -> impl IntoResponse {
+async fn render_tree(user: String, repo: String, path: String) -> impl IntoResponse {
     let repo_path = PathBuf::from(format!("repos/{}/{}", user, repo));
-    /* ls-tree output format: <mode> <type> <object> <file> */
-    let tree_output = run_git(&repo_path, &["ls-tree", "HEAD", &path]);
-    let files: Vec<String> = tree_output
-        .lines()
-        .map(|line| {
-            let parts: Vec<&str> = line.split('\t').collect();
-            parts.get(1).unwrap_or(&"").to_string()
-        })
-        .collect();
+    let clean_path = path.trim_start_matches('/').trim_end_matches('/');
+
+    let dir_target = if clean_path.is_empty() {
+        String::new()
+    } else {
+        format!("{}/", clean_path)
+    };
+
+    let git_args = if clean_path.is_empty() {
+        vec!["ls-tree", "HEAD"]
+    } else {
+        vec!["ls-tree", "HEAD", &dir_target]
+    };
+
+    let tree_output = run_git(&repo_path, &git_args);
+
+    let mut files = Vec::new();
+    for line in tree_output.lines() {
+        if line.is_empty() {
+            continue;
+        }
+
+        let parts: Vec<&str> = line.split('\t').collect();
+        let metadata_part = parts.get(0).unwrap_or(&"");
+
+        let metadata: Vec<&str> = metadata_part.split_whitespace().collect();
+        let mode = metadata.get(0).unwrap_or(&"").to_string();
+
+        if let Some(&full_path) = parts.get(1) {
+            let display_name = full_path.split('/').last().unwrap_or(full_path).to_string();
+
+            if !display_name.is_empty() {
+                let is_dir = mode.starts_with("04");
+
+                files.push(GitFile {
+                    name: display_name,
+                    mode,
+                    is_dir,
+                });
+            }
+        }
+    }
 
     render(TreeTemplate {
         user,
         repo,
-        path,
+        path: clean_path.to_string(),
         files,
     })
+}
+
+async fn tree_root(Path((user, repo)): Path<(String, String)>) -> impl IntoResponse {
+    render_tree(user, repo, String::new()).await
+}
+
+async fn tree(Path((user, repo, path)): Path<(String, String, String)>) -> impl IntoResponse {
+    render_tree(user, repo, path).await
 }
 
 async fn blob(Path((user, repo, path)): Path<(String, String, String)>) -> impl IntoResponse {
@@ -232,6 +284,8 @@ async fn main() {
         .route("/{user}/create-repo", post(create_repo))
         .route("/{user}/{repo}", get(repo))
         .route("/{user}/{repo}/commits", get(commits))
+        .route("/{user}/{repo}/tree", get(tree_root)) // Ловит ровно /tree
+        .route("/{user}/{repo}/tree/", get(tree_root)) // Ловит /tree/ (вот она, твоя 404!)
         .route("/{user}/{repo}/tree/{*path}", get(tree))
         .route("/{user}/{repo}/blob/{*path}", get(blob));
 
