@@ -10,7 +10,7 @@
             <div class="window-body" style="padding: 1rem">
                 <h3>Зареєстровані користувачі RetroGit</h3>
 
-                <ul class="file-list">
+                <ul class="file-list" id="user-list">
                     {% for user in users %}
                     <li>
                         {% if user.has_avatar %}
